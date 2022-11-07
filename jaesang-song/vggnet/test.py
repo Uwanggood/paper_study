@@ -8,7 +8,7 @@ from torch import nn
 def build_model() -> nn.Module:  # nn.Module은 파이토치에서 제공하는 모듈이다.
     dict = model.__dict__[config.model_arch_name]
     if dict is None:
-        raise Exception("model.__dict__[config.model_arch_name] is not defined.")
+        raise ValueError("model.__dict__[config.model_arch_name] is not defined.")
 
     vgg_model = dict(num_classes=config.model_num_classes)
     vgg_model = vgg_model.to(device=config.device, memory_format=torch.channels_last)
@@ -25,6 +25,7 @@ def main() -> None:  # 화살표는 함수리턴에 대한 주석이다.(functio
     vgg_model, _, _, _, _, _ = load_state_dict(vgg_model, config.model_weights_path)
     vgg_model.eval()
 
+    test_prefetcher = model.load_dataset()
 
 if __name__ == "__main__":
     main()

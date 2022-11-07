@@ -54,7 +54,14 @@ class VGG(nn.Module):
 
         # Initialize neural network weights
         self._initialize_weights()
-        ...
+
+    def forward(self, x: Tensor) -> Tensor:
+        x = self.features(x)
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.classfier(x)
+        return x
+
     def _initialize_weights(self) -> None:
         for module in self.modules():
             if isinstance(module, nn.Conv2d):
@@ -71,3 +78,7 @@ class VGG(nn.Module):
 
 def vgg19_bn(**kwargs) -> VGG:
     return VGG(vgg_cfgs["vgg19"], True, **kwargs)
+
+
+def load_dataset():
+    test_dataset = ImageDataset(config.test_image_dir, config.image_size, "Test")
