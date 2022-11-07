@@ -1,10 +1,11 @@
 from torch import nn
 from typing import cast, Dict, List, Union
+import torch
+from torch import Tensor
+from torch import nn
 
 __all__ = [
-    "VGG",
-    "vgg11", "vgg13", "vgg16", "vgg19",
-    "vgg11_bn", "vgg13_bn", "vgg16_bn", "vgg19_bn",
+    "VGG", "vgg19_bn",
 ]
 
 vgg_cfgs: Dict[str, List[Union[str, int]]] = {
@@ -67,3 +68,6 @@ class VGG(nn.Module):
             elif isinstance(module, nn.Linear):
                 nn.init.normal_(module.weight, 0, 0.01)
                 nn.init.constant_(module.bias, 0)
+
+def vgg19_bn(**kwargs) -> VGG:
+    return VGG(vgg_cfgs["vgg19"], True, **kwargs)
