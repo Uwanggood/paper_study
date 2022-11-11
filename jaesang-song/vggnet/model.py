@@ -3,6 +3,8 @@ from typing import cast, Dict, List, Union
 import torch
 from torch import Tensor
 from torch import nn
+import config
+
 
 __all__ = [
     "VGG", "vgg19_bn",
@@ -79,6 +81,3 @@ class VGG(nn.Module):
 def vgg19_bn(**kwargs) -> VGG:
     return VGG(vgg_cfgs["vgg19"], True, **kwargs)
 
-
-def load_dataset():
-    test_dataset = ImageDataset(config.test_image_dir, config.image_size, "Test")

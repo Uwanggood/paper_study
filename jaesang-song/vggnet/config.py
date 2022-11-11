@@ -10,6 +10,16 @@ model_arch_url = {"vgg19_bn": "https://download.pytorch.org/models/vgg19_bn-c794
                   "vgg11_bn": "https://download.pytorch.org/models/vgg11_bn-6002323d.pth",
                   "vgg11": "https://download.pytorch.org/models/vgg11-bbd30ac9.pth"}
 
+os = "linux"
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model_num_classes = 1000
 model_weights_path = None
+image_size = 224
+test_image_dir = "/Users/jae-sangsong/Downloads/archive (2)/HQ_512x512" if os == 'linux' \
+    else "c:/Users/..."
+batch_size = 32
+num_workers = 4
+
+
+# How many iterations to print the testing result
+test_print_frequency = 20
