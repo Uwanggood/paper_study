@@ -2,6 +2,7 @@ import sys
 
 import cv2
 import torch
+import pandas as pd
 from torch.distributions import transforms
 from torch.utils.data import Dataset, DataLoader
 from glob import glob
@@ -30,6 +31,7 @@ IMG_EXTENSIONS = ("jpg", "jpeg", "png", "ppm", "bmp", "pgm", "tif", "tiff", "web
 class ImageDataset(Dataset):
     def __init__(self,
                  image_dir: str,
+                 image_target_dir: str,
                  image_size: int,
                  # Dataset loading method, the training data set is for data enancement, and the verification data set is not for data enhancement.
                  # and the verification data set  is not for data enhancement.
@@ -37,8 +39,7 @@ class ImageDataset(Dataset):
                  ) -> None:
         super(ImageDataset, self).__init__()
         self.image_file_paths = glob(f"{image_dir}/*/*")
-
-        _, self.class_to_idx = find_classes(image_dir)
+        self.class_to_idx = pd.read_csv(image_target_dir, index_col=0).to_dict()['name']
         self.image_size = image_size
         self.mode = mode
         self.delimeter = delimiter
@@ -71,8 +72,7 @@ class ImageDataset(Dataset):
         # Read a batch of image data
         if image_name.split(".")[-1].lower() in IMG_EXTENSIONS:
             image = cv2.imread(self.image_file_paths[batch_index])
-            #타겟 주는 방법 변경해야함
-            target = self.class_to_idx[image_dir]
+            target = self.class_to_idx[image_name]
         else:
             raise ValueError(
                 f"Unsupported image extensions, Only support `{IMG_EXTENSIONS}`, please check the image file extensions.")

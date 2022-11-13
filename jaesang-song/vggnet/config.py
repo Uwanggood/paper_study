@@ -12,10 +12,12 @@ model_arch_url = {"vgg19_bn": "https://download.pytorch.org/models/vgg19_bn-c794
 
 os = "linux"
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-model_num_classes = 1000
+model_num_classes = 55
 model_weights_path = None
 image_size = 224
 test_image_dir = "/Users/jae-sangsong/Downloads/archive (2)/HQ_512x512" if os == 'linux' \
+    else "c:/Users/..."
+test_image_target_dir = "/Users/jae-sangsong/Downloads/archive (2)/kid_f_train.csv" if os == 'linux' \
     else "c:/Users/..."
 batch_size = 32
 num_workers = 4

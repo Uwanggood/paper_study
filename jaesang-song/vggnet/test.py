@@ -9,9 +9,8 @@ from torch import nn
 from dataset import CUDAPrefetcher, ImageDataset, CPUPrefetcher
 from torch.utils.data import DataLoader
 
-
 def load_dataset() -> CUDAPrefetcher:
-    test_dataset = ImageDataset(config.test_image_dir, config.image_size, "Test")
+    test_dataset = ImageDataset(config.test_image_dir,config.test_image_target_dir, config.image_size, "Test")
     test_dataloader = DataLoader(test_dataset,
                                  batch_size=config.batch_size,
                                  shuffle=False,
@@ -25,7 +24,6 @@ def load_dataset() -> CUDAPrefetcher:
         else CPUPrefetcher(test_dataloader)
 
     return test_prefetcher
-
 
 def build_model() -> nn.Module:  # nn.Module은 파이토치에서 제공하는 모듈이다.
     dict = model.__dict__[config.model_arch_name]
@@ -43,7 +41,7 @@ def main() -> None:  # 화살표는 함수리턴에 대한 주석이다.(functio
     print(f"Build {config.model_arch_name.upper()} model successfully.")
 
     # Load model weights
-    # 기존 소스는 weight를 불러와서 이용했지만 weight가 없으므로 torch.hub를 사용한다.
+    # 기존 소스는 weight를 불러와서 이용했지만 weight가 없으므로 torch.hub를 사용한다.D
     vgg_model, _, _, _, _, _ = load_state_dict(vgg_model)
     vgg_model.eval()
 
@@ -70,18 +68,17 @@ def main() -> None:  # 화살표는 함수리턴에 대한 주석이다.(functio
         while batch_data is not None:
             # Transfer in-memory data to CUDA device to speed up training
             images = batch_data["image"].to(device=config.device, non_blocking=True)
-            target = batch_data["target"].to(device=config.device, non_blocking=True)
+            target = batch_data["target"]
 
             # Get batch size
-            batch_size = image.size(0)
+            batch_size = images.size(0)
 
             # inference
             output = vgg_model(images)
 
             # measure accuracy and record loss
-            top1, top5 = accuracy(output, target, topk=(1, 5))
-            acc1.update(top1[0], batch_size)
-            acc5.update(top5[0], batch_size)
+            acc = accuracy(output, target)
+            acc1.update(acc, batch_size)
 
             # Calculate the time it takes to fully train a batch of data
             batch_time.update(time.time() - end)
